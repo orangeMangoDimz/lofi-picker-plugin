@@ -8,10 +8,11 @@
         "default_title": "Lofi Music",
         "default_popup": "popup.html"
     },
-    "permissions": ["activeTab", "storage", "tabs"],
+    "permissions": ["activeTab", "storage", "tabs", "offscreen", "scripting"],
     "host_permissions": ["https://www.youtube.com/*", "https://s.ytimg.com/*"],
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "type": "module"
     },
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self'"
