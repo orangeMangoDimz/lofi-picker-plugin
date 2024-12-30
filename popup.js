@@ -7,6 +7,8 @@ const listOfActions = [
         action: () => {
             playBtn.disabled = true;
             pauseBtn.disabled = false;
+            playBtn.style.display = 'none';
+            pauseBtn.style.display = 'block';
             saveButtonState("play");
         },
     },
@@ -15,15 +17,14 @@ const listOfActions = [
         action: () => {
             playBtn.disabled = false;
             pauseBtn.disabled = true;
+            playBtn.style.display = 'block';
+            pauseBtn.style.display = 'none';
             saveButtonState("pause");
         },
     },
 ];
 
 function init() {
-    playBtn.disabled = false;
-    pauseBtn.disabled = true;
-
      chrome.storage.local.get("buttonState", (result) => {
         const state = result.buttonState || "pause";
         handleButtonState(state);
@@ -44,6 +45,7 @@ function handleButtonState(action) {
     for (const item of listOfActions) {
         if (item.name === action) {
             item.action();
+            break;
         }
     }
 }
