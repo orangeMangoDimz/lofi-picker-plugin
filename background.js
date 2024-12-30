@@ -9,3 +9,9 @@ async function createOffscreen() {
 }
 
 createOffscreen();
+
+chrome.runtime.onMessage.addListener((message) => {
+    if (message) {
+        console.log("message:", message);
+    }
+});
