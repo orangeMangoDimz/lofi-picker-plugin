@@ -8,7 +8,7 @@
         "default_title": "Lofi Music",
         "default_popup": "popup.html"
     },
-    "permissions": ["activeTab", "storage", "tabs", "offscreen", "scripting"],
+    "permissions": ["activeTab", "storage", "tabs", "offscreen", "scripting", "storage"],
     "host_permissions": ["https://www.youtube.com/*", "https://s.ytimg.com/*"],
     "background": {
         "service_worker": "background.js",

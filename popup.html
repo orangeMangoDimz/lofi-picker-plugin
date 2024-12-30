@@ -8,51 +8,106 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 400px;
             margin: 0 auto;
-            padding: 20px;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        h1 {
-            color: #333;
+        .card {
+            width: 250px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background-color: #181825;
+            color: #cdd6f4;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin: 0;
+        }
+
+        #title-wrapper {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #song-title {
+            color: #cba6f7;
         }
 
         .controls {
             display: flex;
             gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
+            justify-content: right;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 4px 4px;
             font-size: 16px;
             cursor: pointer;
-            background-color: #4caf50;
+            background-color: #181825;
+            border: 1px solid #cba6f7;
             color: white;
-            border: none;
-            border-radius: 4px;
+            border-radius: 16px;
             transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #cba6f7;
         }
 
         button:disabled {
-            background-color: #cccccc;
+            background-color: #cba6f7;
             cursor: not-allowed;
         }
     </style>
 </head>
 
 <body>
-    <h1>Lofi Music</h1>
-    <div class="controls">
-        <button id="play">Play</button>
-        <button id="pause">Pause</button>
-    </div>
+    <section class="card">
+        <div class="controls">
+            <button id="prev">
+                <svg id="prev-icon" xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960"
+                    width="24px" fill="#CDD6F4">
+                    <path d="M220-240v-480h80v480h-80Zm520 0L380-480l360-240v480Zm-80-240Zm0 90v-180l-136 90 136 90Z" />
+                </svg>
+            </button>
+            <button id="play">
+                <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960"
+                    width="24px" fill="#CDD6F4">
+                    <path d="M320-200v-560l440 280-440 280Zm80-280Zm0 134 210-134-210-134v268Z" />
+                </svg>
+            </button>
+            <button id="pause">
+                <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960"
+                    width="24px" fill="#CDD6F4">
+                    <path
+                        d="M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Zm400-80h80v-400h-80v400Zm-320 0h80v-400h-80v400Zm0-400v400-400Zm320 0v400-400Z" />
+                </svg>
+            </button>
+            <button id="next">
+                <svg id="next-icon" xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960"
+                    width="24px" fill="#CDD6F4">
+                    <path d="M660-240v-480h80v480h-80Zm-440 0v-480l360 240-360 240Zm80-240Zm0 90 136-90-136-90v180Z" />
+                </svg>
+            </button>
+        </div>
+        <div id="title-wrapper">
+            <h1 id="song-title">Song Title</h1>
+            <h3 id="song-artist">Song Artist</h3>
+        </div>
+    </section>
 
     <script src="popup.js"></script>
 </body>

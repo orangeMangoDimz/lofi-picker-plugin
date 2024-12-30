@@ -8,10 +8,4 @@ async function createOffscreen() {
     });
 }
 
-// Listen for messages from popup
-chrome.runtime.onMessage.addListener(async (message) => {
-    await createOffscreen();
-    if (message.action === "play" || message.action === "pause") {
-        chrome.runtime.sendMessage(message);
-    }
-});
+createOffscreen();
