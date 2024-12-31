@@ -208,10 +208,42 @@ const listOfActions = [
             playBtn.style.display = "block";
             pauseBtn.style.display = "none";
             const state = {
-                buttonState: "play",
+                buttonState: "pause",
                 musicState: musicState,
             };
             saveButtonState(state);
+        },
+    },
+    {
+        name: "prev",
+        action: (domElement, musicState) => {
+            const songTitle = domElement.getSongTitle();
+            const songArtist = domElement.getSongArtist();
+            songTitle.textContent = musicState.title;
+            songArtist.textContent = musicState.videoOwnerChannelTitle;
+            const state = {
+                buttonState: "play",
+                domElement: domElement,
+                musicState: musicState,
+
+            }
+            handleButtonState(state)
+        },
+    },
+    {
+        name: "next",
+        action: (domElement, musicState) => {
+            const songTitle = domElement.getSongTitle();
+            const songArtist = domElement.getSongArtist();
+            songTitle.textContent = musicState.title;
+            songArtist.textContent = musicState.videoOwnerChannelTitle;
+            const state = {
+                buttonState: "play",
+                domElement: domElement,
+                musicState: musicState,
+
+            }
+            handleButtonState(state)
         },
     },
 ];
@@ -221,6 +253,8 @@ function createDocument() {
     const pauseBtn = document.getElementById("pause");
     const songTitle = document.getElementById("song-title");
     const songArtist = document.getElementById("song-artist");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
 
     return {
         getPlayBtn: () => {
@@ -235,23 +269,75 @@ function createDocument() {
         getSongArtist: () => {
             return songArtist;
         },
+        getPrevBtn: () => {
+            return prevBtn;
+        },
+        getNextBtn: () => {
+            return nextBtn;
+        },
     };
 }
 
 function createMusicState() {
     let currMusicState = {
+        positionIndex: 0,
         title: "Default Title",
         videoId: "",
         videoOwnerChannelTitle: "Default Channel",
         videoOwnerChannelId: "",
     };
 
+    function constructMusicState(newMusicState, newIndex) {
+        const musicState = {
+                positionIndex: newIndex,
+            ...newMusicState
+        }
+        return musicState;
+    }
+
+    function handlePrevMusicState(videoList) {
+        const currMusicIndex = currMusicState.positionIndex
+        let prevVideoList = {}, prevMusicState = {}, newIndex = 0;
+        const isNotFirstIndexMusic = currMusicIndex > 0;
+
+        newIndex = isNotFirstIndexMusic
+            ? currMusicIndex - 1
+            : videoList.length - 1;
+
+        prevVideoList = videoList[newIndex];
+         prevMusicState = constructMusicState(prevVideoList, newIndex)
+        return prevMusicState;
+    }
+
+    function handleNextMusicState(videoList) {
+        const currMusicIndex = currMusicState.positionIndex
+        let nextVideoList = {}, nextMusicState = {}, newIndex = 0;
+        const isNotLastIndexMusic = currMusicIndex < videoList.length - 1
+        
+        newIndex  = isNotLastIndexMusic
+            ? currMusicIndex + 1
+            : 0
+
+        nextVideoList = videoList[newIndex];
+        nextMusicState = constructMusicState(nextVideoList, newIndex)
+        return nextMusicState;
+    }
+
     return {
         getMusicState: () => {
             return currMusicState;
         },
-        setMusicState: (musicState) => {
+        setMusicState: (newMusicState, newIndex) => {
+            const musicState = constructMusicState(newMusicState, newIndex)
             currMusicState = musicState;
+        },
+        getPrevMusicState: (videoList) => {
+            const prevMusicState = handlePrevMusicState(videoList)
+            return prevMusicState;
+        },
+        getNextMusicState: (videoList) => {
+            const nextMusicState = handleNextMusicState(videoList)
+            return nextMusicState;
         },
     };
 }
@@ -272,6 +358,9 @@ function handleButtonState(action) {
     }
 }
 
+// TODO:
+// - go to the next song, if current song is finished
+
 function init() {
     const currMusicState = createMusicState();
     const domElement = createDocument();
@@ -283,12 +372,28 @@ function init() {
         const randomIndexMusic = Math.floor(Math.random() * videoList.length);
         const availableMusicState = musicState || videoList[randomIndexMusic];
 
-        currMusicState.setMusicState(availableMusicState);
+        currMusicState.setMusicState(availableMusicState, randomIndexMusic);
         handleMusicLayout(domElement, availableMusicState);
         const sendState = {
             domElement: domElement,
             buttonState: availableState,
             musicState: availableMusicState,
+        };
+        handleButtonState(sendState);
+    });
+
+
+    domElement.getPrevBtn().addEventListener("click", () => {
+        const prevMusicState = currMusicState.getPrevMusicState(videoList)
+        currMusicState.setMusicState(prevMusicState, prevMusicState.positionIndex);
+        chrome.runtime.sendMessage({
+            action: "play",
+            data: currMusicState.getMusicState(),
+        });
+        const sendState = {
+            domElement: domElement,
+            buttonState: "prev",
+            musicState: currMusicState.getMusicState(),
         };
         handleButtonState(sendState);
     });
@@ -314,6 +419,21 @@ function init() {
         const sendState = {
             domElement: domElement,
             buttonState: "pause",
+            musicState: currMusicState.getMusicState(),
+        };
+        handleButtonState(sendState);
+    });
+
+    domElement.getNextBtn().addEventListener("click", () => {
+        const nextMusicState = currMusicState.getNextMusicState(videoList)
+        currMusicState.setMusicState(nextMusicState, nextMusicState.positionIndex);
+        chrome.runtime.sendMessage({
+            action: "play",
+            data: currMusicState.getMusicState(),
+        });
+        const sendState = {
+            domElement: domElement,
+            buttonState: "next",
             musicState: currMusicState.getMusicState(),
         };
         handleButtonState(sendState);
