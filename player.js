@@ -7,6 +7,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const url = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
         iframe.src = url;
         iframe.onload = () => {
+            initPlayer(iframe, data);
             if (action === "pause" || action === "play") {
                 changeMusic(iframe, action);
             }
@@ -27,6 +28,29 @@ function changeMusic(iframe, action) {
             event: "command",
             func: action + "Video",
             args: [],
+        }),
+        "*",
+    );
+}
+function initPlayer(iframe, musicState) {
+    window.addEventListener("message", function(event) {
+        try {
+            const data = JSON.parse(event.data);
+            if (data.event === "infoDelivery" && data.info.playerState === 0) {
+                chrome.runtime.sendMessage({
+                    action: "next",
+                    data: musicState,
+                });
+            }
+        } catch (e) {
+            console.log("error parsing message", e);
+        }
+    });
+    
+    // litsen to the youtube iframe player to get callback
+    iframe.contentWindow.postMessage(
+        JSON.stringify({
+            event: "listening",
         }),
         "*",
     );

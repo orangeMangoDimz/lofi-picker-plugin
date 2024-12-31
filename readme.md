@@ -7,3 +7,4 @@ TODO
 - [ ] Song picker based on mood
 - [x] Update music player UI
 - [ ] Add a shortcut key to play/pause the song
+- [ ] Shuffle song lofi
