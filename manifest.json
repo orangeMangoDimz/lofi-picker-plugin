@@ -35,6 +35,20 @@
                 "mac": "Ctrl+Shift+Y"
             },
             "description": "Play or pause music"
+        },
+        "next-music": {
+            "suggested_key": {
+                "default": "Alt+N",
+                "mac": "Alt+N"
+            },
+            "description": "Next music"
+        },
+        "prev-music": {
+            "suggested_key": {
+                "default": "Alt+P",
+                "mac": "Alt+P"
+            },
+            "description": "Prev music"
         }
     }
 }

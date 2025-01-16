@@ -56,6 +56,14 @@ chrome.commands.onCommand.addListener(async (receivedCommand) => {
             name: "toogle-muisc",
             action: () => handleToogleMusic(),
         },
+        {
+           name: "next-music",
+            action: () => handleNextMusic(),
+        },
+        {
+            name: "prev-music",
+            action: () => handlePrevMuisc(),
+        },
     ];
 
     for (let command of COMMANDS) {
@@ -71,26 +79,44 @@ chrome.commands.onCommand.addListener(async (receivedCommand) => {
     }
 });
 
+async function _handleInitMusic(command) {
+    let { action, data } = lastMessage;
+
+    const result = await new Promise((resolve) => {
+        chrome.storage.local.get(["buttonState", "musicState"], resolve);
+    });
+
+    let { buttonState, musicState: oldMuiscState } = result;
+    const hasExistingState =
+        buttonState && Object.keys(oldMuiscState || {}).length > 0;
+
+    const newMusicState = createMusicState()
+    if (hasExistingState) {
+        action = buttonState === "play" ? "pause" : "play";
+        newMusicState.setMusicState(oldMuiscState, oldMuiscState.positionIndex);
+    } else {
+        action = "play";
+        const randomMusicState  = newMusicState.getRandomMusicState(videoList);
+        newMusicState.setMusicState(randomMusicState, randomMusicState.positionIndex);
+    }
+
+    if (command === "next") {
+        action = "play";
+        data = newMusicState.getNextMusicState(videoList);
+    } else if (command === "prev") {
+        action = "play";
+        data = newMusicState.getPrevMusicState(videoList);
+    } else {
+        data = newMusicState.getMusicState();
+    }
+
+    return { action, data };
+}
+
 async function handleToogleMusic() {
     try {
-        let { action, data } = lastMessage;
-
-        const result = await new Promise((resolve) => {
-            chrome.storage.local.get(["buttonState", "musicState"], resolve);
-        });
-
-        let { buttonState, musicState } = result;
-        const hasExistingState =
-            buttonState && Object.keys(musicState || {}).length > 0;
-
-        if (hasExistingState) {
-            action = buttonState === "play" ? "pause" : "play";
-            data = musicState;
-        } else {
-            action = "play";
-            data = createMusicState().getRandomMusicState(videoList);
-        }
-
+        const  { action, data } =  await _handleInitMusic("toogle")
+        console.info("toogle music", action, data);
         chrome.runtime.sendMessage({
             action: action,
             data: data,
@@ -102,5 +128,41 @@ async function handleToogleMusic() {
         });
     } catch (error) {
         throw new Error("Error toggling music", error);
+    }
+}
+
+async function handleNextMusic() {
+    try {
+        const { action, data } = await _handleInitMusic("next")
+        console.info("next music", action, data);
+        chrome.runtime.sendMessage({
+            action: action,
+            data: data,
+        });
+
+        await chrome.storage.local.set({
+            buttonState: action,
+            musicState: data,
+        });
+    } catch (error) {
+        throw new Error("Error getting next music", error);
+    }
+}
+
+async function handlePrevMuisc() {
+    try {
+        const { action, data } = await _handleInitMusic("prev")
+        console.info("prev music", action, data);
+        chrome.runtime.sendMessage({
+            action: action,
+            data: data,
+        });
+
+        await chrome.storage.local.set({
+            buttonState: action,
+            musicState: data,
+        });
+    } catch (error) {
+        throw new Error("Error getting prev music", error);
     }
 }
