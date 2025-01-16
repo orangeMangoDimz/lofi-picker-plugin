@@ -8,7 +8,15 @@
         "default_title": "Lofi Music",
         "default_popup": "popup.html"
     },
-    "permissions": ["activeTab", "storage", "tabs", "offscreen", "scripting", "storage"],
+    "permissions": [
+        "activeTab",
+        "storage",
+        "tabs",
+        "offscreen",
+        "scripting",
+        "storage",
+        "commands"
+    ],
     "host_permissions": ["https://www.youtube.com/*", "https://s.ytimg.com/*"],
     "background": {
         "service_worker": "background.js",
@@ -19,5 +27,28 @@
     },
     "icons": {
         "48": "icon.png"
+    },
+    "commands": {
+        "toogle-muisc": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Y",
+                "mac": "Ctrl+Shift+Y"
+            },
+            "description": "Play or pause music"
+        },
+        "next-music": {
+            "suggested_key": {
+                "default": "Alt+N",
+                "mac": "Alt+N"
+            },
+            "description": "Next music"
+        },
+        "prev-music": {
+            "suggested_key": {
+                "default": "Alt+P",
+                "mac": "Alt+P"
+            },
+            "description": "Prev music"
+        }
     }
 }
