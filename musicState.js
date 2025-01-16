@@ -45,6 +45,12 @@ export function createMusicState() {
         return nextMusicState;
     }
 
+    function handleRandomMusicState(videoList) {
+        const randomIndexMusic = Math.floor(Math.random() * videoList.length);
+        const randomMusic = videoList[randomIndexMusic];
+        return { randomIndexMusic,  randomMusic };
+    }
+
     return {
         getMusicState: () => {
             return currMusicState;
@@ -61,5 +67,11 @@ export function createMusicState() {
             const nextMusicState = handleNextMusicState(videoList);
             return nextMusicState;
         },
+        getRandomMusicState: (videoList) => {
+            const randomMusicState =  handleRandomMusicState(videoList);
+            const { randomIndexMusic, randomMusic } =  randomMusicState;
+            const musicState = constructMusicState(randomMusic, randomIndexMusic);
+            return musicState;
+        }
     };
 }
